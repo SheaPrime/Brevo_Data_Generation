@@ -1,0 +1,155 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+Table datasets [note: 'Common dataset table'] {
+id int [pk]
+name varchar
+}
+Table brevo_users {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+first_name varchar
+last_name varchar
+email varchar
+}
+Table brevo_contacts {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+first_name varchar
+last_name varchar
+email varchar
+sms_number varchar
+whatsapp_number varchar
+textlandline_number varchar
+contact_owner_id int
+address varchar
+city varchar
+country varchar
+zip_code varchar
+region varchar
+}
+Table brevo_contacts_folders {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+name varchar
+}
+Table brevo_contacts_lists {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+type varchar [note: 'folder, list']
+name varchar
+folder_id int [ref: > brevo_contacts_folders.id]
+}
+Table brevo_email_interactions {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+email_type varchar [note:'transactional, campaign']
+email_name varchar [note:'name of campaign in brevo']
+subject_line_pattern varchar [note:'subject of email in brevo']
+email_recipient_pattern varchar [note: '.brev@tbxofficial.com']
+open_rate decimal
+click_rate decimal
+
+unsubscribe_rate decimal
+}
+Table brevo_orders {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+base_date date
+contact_id int
+relative_order_created_at interval
+relative_order_updated_at interval
+status int
+amount decimal
+coupon varchar
+payment_method varchar
+}
+Table brevo_orders_line_items {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+order_id int [ref: > brevo_orders.id]
+product_id int
+quantity int
+}
+Table brevo_products {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+name varchar
+price decimal
+sku varchar
+image_url varchar
+parent_category_id int [ref: > brevo_products_categories.id]
+}
+Table brevo_products_categories {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+name varchar
+}
+Table brevo_product_categories_mappings {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+product_id int
+product_category_id int
+}
+Table brevo_website_action_templates {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+template_id int
+action_order int
+action_type varchar
+page_id int
+time_delay interval
+}
+
+Table brevo_deals {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+name varchar
+owner_id int [ref: > brevo_users.id]
+deal_stage int [ref: > brevo_deals_pipelines_stages.id]
+amount decimal
+close_date date
+}
+Table brevo_deals_contacts {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+deal_id int [ref: > brevo_deals.id]
+contact_id int [ref: > brevo_contacts.id]
+}
+Table brevo_companies {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+name varchar
+owner_id int [ref: > brevo_users.id]
+website varchar
+industry varchar
+phone varchar
+}
+Table brevo_companies_contacts {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+company_id int [ref: > brevo_companies.id]
+contact_id int [ref: > brevo_contacts.id]
+}
+Table brevo_website_pages {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+page_name varchar
+url varchar
+path varchar
+title varchar
+}
+Table brevo_deals_pipelines {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+name varchar
+default_pipeline bool
+}
+Table brevo_deals_pipelines_stages {
+id int [pk]
+dataset_id int [ref: > datasets.id]
+pipeline_id int [ref: > brevo_deals_pipelines.id]
+stage_order int
+stage_name varchar
+win_percentage decimal
+
+}
